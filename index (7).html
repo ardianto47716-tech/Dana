@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danaku</title>
+    <!-- Menggunakan Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 412px;
+            background-color: #108ee9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            overflow-x: hidden;
+        }
+
+        /* Screen Wrapper */
+        .screen {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            flex-grow: 1;
+            background-color: #f5f9fc;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Status Bar Mock */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 16px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: transparent;
+            z-index: 10;
+        }
+
+        .status-bar.dark-text {
+            color: #333;
+        }
+
+        .status-right {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        /* --- SCREEN 1: BERANDA --- */
+        #screen-beranda {
+            background-color: #108ee9;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+        }
+
+        .balance-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+
+        .logo-danaku {
+            width: 28px;
+            height: 28px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #108ee9;
+            font-size: 16px;
+        }
+
+        .balance-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .btn-cobain {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .main-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 20px 10px;
+            text-align: center;
+            color: white;
+        }
+
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .action-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            position: relative;
+        }
+
+        .action-item span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .badge-check {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: #ff4d4f;
+            color: white;
+            font-size: 8px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .promo-header-banner {
+            background: linear-gradient(180deg, #108ee9 0%, #26a4ff 100%);
+            margin: 0 16px 16px 16px;
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .promo-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .btn-klaim {
+            background-color: #ffbb00;
+            color: #7d4f00;
+            font-weight: 800;
+            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            border: none;
+        }
+
+        .pokemon-img-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .main-content {
+            background-color: #f5f9fc;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            flex-grow: 1;
+            padding: 20px 16px 120px 16px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            row-gap: 20px;
+            column-gap: 10px;
+            text-align: center;
+            background: white;
+            padding: 20px 10px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            margin-bottom: 16px;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .menu-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .menu-item text {
+            font-size: 11px;
+            color: #333;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        .mini-badge {
+            position: absolute;
+            top: -6px;
+            background-color: #ffaa00;
+            color: white;
+            font-size: 8px;
+            padding: 1px 4px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .info-feeds {
+            background: white;
+            border-radius: 16px;
+            padding: 8px 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f2f2f2;
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+
+        .feed-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .feed-left .blue-dot {
+            color: #108ee9;
+            font-size: 6px;
+        }
+
+        .large-promo-banner {
+            background: linear-gradient(135deg, #1f9b67 0%, #3cb878 100%);
+            border-radius: 16px;
+            padding: 16px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(31,155,103,0.15);
+        }
+
+        .banner-left h2 {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .banner-left p {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .btn-koleksi {
+            background-color: #ffbb00;
+            color: #7d4f00;
+            font-weight: 800;
+            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: none;
+        }
+
+        .alert-bar {
+            position: fixed;
+            bottom: 64px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 380px;
+            background-color: #ff4d4f;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 412px;
+            background-color: white;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            padding: 8px 0;
+            border-top: 1px solid #e8e8e8;
+            text-align: center;
+            z-index: 9;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #108ee9;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .pay-btn-container {
+            position: relative;
+            top: -14px;
+        }
+
+        .pay-circle {
+            width: 52px;
+            height: 52px;
+            background-color: #108ee9;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            border: 4px solid white;
+            box-shadow: 0 3px 8px rgba(16,142,233,0.3);
+        }
+
+        .pay-circle span {
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .profile-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- SCREEN HEADER UMUM (Kirim Uang / Teman) --- */
+        .app-header {
+            background-color: #108ee9;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            position: relative;
+        }
+
+        .app-header .back-btn {
+            font-size: 18px;
+            cursor: pointer;
+            position: absolute;
+            left: 16px;
+        }
+
+        .app-header .header-title {
+            width: 100%;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .app-header .right-icon {
+            position: absolute;
+            right: 16px;
+            font-size: 18px;
+        }
+
+        /* --- SCREEN 2: KIRIM UANG --- */
+        #screen-kirim {
+            background-color: #108ee9;
+        }
+
+        .kirim-container {
+            background-color: #f5f9fc;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            flex-grow: 1;
+            padding: 20px 16px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 10px 12px;
+            gap: 10px;
+        }
+
+        .search-wrapper i {
+            color: #999;
+        }
+
+        .search-wrapper input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .btn-batal-search {
+            color: #108ee9;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Kirim Ke Dana Live Row */
+        .live-search-row {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 12px;
+            background: white;
+            border-radius: 12px;
+            margin-top: 10px;
+            border: 1px solid #eef2f5;
+            cursor: pointer;
+        }
+
+        .live-search-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .live-icon-box {
+            width: 38px;
+            height: 38px;
+            background-color: #108ee9;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .live-phone-num {
+            font-size: 15px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .badge-baru {
+            background-color: #108ee9;
+            color: white;
+            font-size: 9px;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 6px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px 8px;
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .contact-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #888;
+            font-size: 20px;
+            overflow: hidden;
+        }
+
+        .contact-name {
+            font-size: 12px;
+            color: #444;
+            font-weight: 500;
+            line-height: 1.2;
+            height: 28px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .lihat-semua-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            color: #108ee9;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 14px;
+            cursor: pointer;
+        }
+
+        .menu-kirim-opsi {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+
+        .opsi-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .opsi-box i {
+            font-size: 26px;
+        }
+
+        .opsi-box span {
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .opsi-badge {
+            position: absolute;
+            top: -4px;
+            background-color: #ffaa00;
+            color: white;
+            font-size: 8px;
+            padding: 1px 4px;
+            border-radius: 6px;
+            font-weight: bold;
+            transform: scale(0.9);
+        }
+
+        /* --- DIALOG MODAL (Gambar 2 & Referensi 3) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 412px;
+            background: white;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header-graphic {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(180deg, #d2eeff 0%, #ffffff 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .modal-header-graphic .user-i {
+            font-size: 42px;
+            color: #108ee9;
+        }
+
+        .modal-header-graphic .question-badge {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background-color: #108ee9;
+            color: white;
+            font-size: 14px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .target-user-card {
+            width: 100%;
+            border: 1px solid #eef2f5;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .target-avatar-mini {
+            width: 38px;
+            height: 38px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #888;
+            font-size: 16px;
+        }
+
+        .target-info-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .target-info-phone {
+            font-size: 13px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .warning-notice-box {
+            width: 100%;
+            background-color: #fff9e6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #8a6d3b;
+            font-weight: 500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .disclaimer-text {
+            font-size: 11px;
+            color: #999;
+            text-align: center;
+            line-height: 1.4;
+            margin-bottom: 24px;
+            padding: 0 10px;
+        }
+
+        .modal-actions-buttons {
+            display: flex;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-modal.btn-secondary {
+            background-color: white;
+            color: #108ee9;
+            border: 1px solid #108ee9;
+        }
+
+        .btn-modal.btn-primary {
+            background-color: #108ee9;
+            color: white;
+        }
+
+        /* --- SCREEN 3: KIRIM KE TEMAN (INPUT NOMINAL) --- */
+        .recipient-bar {
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #f0f4f7;
+        }
+
+        .nominal-input-container {
+            background: white;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .nominal-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .nominal-row {
+            display: flex;
+            align-items: baseline;
+            width: 100%;
+        }
+
+        .nominal-row .rp-symbol {
+            font-size: 24px;
+            font-weight: 700;
+            color: #222;
+            margin-right: 6px;
+        }
+
+        .nominal-display-val {
+            font-size: 32px;
+            font-weight: 700;
+            color: #222;
+            min-height: 38px;
+        }
+
+        .pending-guarantee-badge {
+            position: absolute;
+            right: 16px;
+            top: 20px;
+            width: 68px;
+            height: 68px;
+            border: 2px dashed #108ee9;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #108ee9;
+            font-size: 7px;
+            font-weight: 800;
+            transform: rotate(-15deg);
+        }
+
+        .note-input-wrapper {
+            background: white;
+            margin-top: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 8px;
+            border: 1px solid #eef2f5;
+            width: calc(100% - 32px);
+            margin-left: 16px;
+        }
+
+        .note-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .note-left i {
+            color: #108ee9;
+        }
+
+        .badge-baru-red {
+            background-color: #ff4d4f;
+            color: white;
+            font-size: 8px;
+            padding: 1px 4px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .hide-name-row {
+            background: white;
+            margin-top: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: calc(100% - 32px);
+            margin-left: 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .checkbox-mock {
+            width: 18px;
+            height: 18px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        /* Keyboard Numeric Custom */
+        .custom-keyboard {
+            background-color: #f7f9fa;
+            margin-top: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+            color: #222;
+            border-top: 1px solid #eef2f5;
+        }
+
+        .key-btn {
+            padding: 14px 0;
+            border-right: 1px solid #eef2f5;
+            border-bottom: 1px solid #eef2f5;
+            cursor: pointer;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .key-btn:active {
+            background-color: #f0f0f0;
+        }
+
+        .key-btn:nth-child(3n) {
+            border-right: none;
+        }
+
+        .key-btn.gray-bg {
+            background-color: #f7f9fa;
+        }
+
+        .bottom-action-container {
+            background: white;
+            padding: 12px 16px;
+            width: 100%;
+        }
+
+        .btn-submit-nominal {
+            width: 100%;
+            background-color: #e0e0e0;
+            color: #a0a0a0;
+            text-align: center;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            border: none;
+            cursor: not-allowed;
+            text-transform: uppercase;
+        }
+
+        .btn-submit-nominal.ready {
+            background-color: #108ee9;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* --- SCREEN 4: SUKSES TRANSAKSI (GAMBAR NO 3) --- */
+        #screen-sukses {
+            background-color: #108ee9;
+            justify-content: flex-start;
+            align-items: center;
+            color: white;
+            padding: 40px 24px;
+        }
+
+        .success-circle {
+            width: 76px;
+            height: 76px;
+            background-color: #ffbb00;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 38px;
+            color: white;
+            margin-top: 40px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .sukses-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .sukses-target-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .sukses-target-phone {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+        }
+
+        .sukses-amount-display {
+            font-size: 44px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .btn-bagikan {
+            background-color: transparent;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            margin-bottom: auto;
+        }
+
+        .sukses-footer-buttons {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+        }
+
+        .btn-footer-sukses {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            text-transform: uppercase;
+            border: none;
+        }
+
+        .btn-footer-sukses.btn-white {
+            background-color: white;
+            color: #108ee9;
+        }
+
+        .btn-footer-sukses.btn-outline-white {
+            background-color: transparent;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+
+        <!-- ================= SCREEN 1: BERANDA ================= -->
+        <div id="screen-beranda" class="screen active">
+            <div class="status-bar">
+                <div>14.26 <i class="fa-solid fa-angle-down" style="font-size: 10px;"></i> <i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="status-right">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <i class="fa-solid fa-signal"></i> 4G
+                    <i class="fa-solid fa-battery-three-quarters"></i>
+                </div>
+            </div>
+
+            <div class="top-header">
+                <div class="balance-box">
+                    <div class="logo-danaku">d</div>
+                    <div id="main-balance-text" class="balance-text">Rp 100.000</div>
+                    <i class="fa-regular fa-eye-slash" style="font-size: 14px; color: rgba(255,255,255,0.7);"></i>
+                </div>
+                <button class="btn-cobain">Cobain DANA+</button>
+            </div>
+
+            <div class="main-actions">
+                <div class="action-item">
+                    <div class="action-icon-wrapper"><i class="fa-solid fa-square-plus"></i></div>
+                    <span>Top Up</span>
+                </div>
+                <div class="action-item">
+                    <div class="action-icon-wrapper"><span style="font-weight: bold; font-size: 14px;">Rp</span></div>
+                    <span>Minta</span>
+                </div>
+                <div class="action-item" onclick="navigateTo('screen-kirim')">
+                    <div class="action-icon-wrapper"><span style="font-weight: bold; font-size: 14px;">Rp</span></div>
+                    <span>Kirim</span>
+                </div>
+                <div class="action-item">
+                    <div class="action-icon-wrapper">
+                        <i class="fa-regular fa-envelope"></i>
+                        <div class="badge-check"><i class="fa-solid fa-check"></i></div>
+                    </div>
+                    <span>Pesan</span>
+                </div>
+            </div>
+
+            <div class="promo-header-banner">
+                <div>
+                    <div class="promo-title">Koleksi GRATIS<br>Skin Bulbasaur</div>
+                    <button class="btn-klaim">Klaim Sekarang</button>
+                </div>
+                <div class="pokemon-img-container">
+                    <i class="fa-solid fa-frog" style="font-size: 38px; color: #a3e2c9;"></i>
+                    <i class="fa-solid fa-circle-nodes" style="font-size: 32px; color: #ffcb05;"></i>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="menu-icon" style="color: #ff4d4f;"><i class="fa-solid fa-circle-dot"></i></div>
+                        <text>Misi Skin</text>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon" style="color: #333;"><i class="fa-solid fa-qrcode"></i></div>
+                        <text>QRIS Usaha</text>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon" style="color: #108ee9;"><i class="fa-solid fa-circle-c"></i></div>
+                        <text>DANA CICIL</text>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon" style="color: #ffbb00;"><i class="fa-solid fa-play"></i></div>
+                        <text>Google Play Zone</text>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon" style="color: #ff4d4f;"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                        <text>Pulsa & Data</text>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon" style="color: #00a3c4;"><i class="fa-solid fa-gift"></i></div>
+                        <div class="mini-badge">RP 600</div>
+                        <text>A+ Rewards</text>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon" style="color: #52c41a;"><i class="fa-solid fa-plane"></i></div>
+                        <div class="mini-badge" style="background-color: #ff4d4f;">15JT</div>
+                        <text>Travel</text>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon" style="color: #8c8c8c;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/></svg>
+                        </div>
+                        <text>Lihat Semua</text>
+                    </div>
+                </div>
+
+                <div class="info-feeds">
+                    <div class="feed-item">
+                        <div class="feed-left"><i class="fa-solid fa-circle blue-dot"></i> <span>DANA Main <span style="color:#108ee9; font-weight:bold;">Joy Games</span> buat Double Beans</span></div>
+                        <div style="color:#aaa; font-size:11px;"><i class="fa-solid fa-bullhorn"></i></div>
+                    </div>
+                    <div class="feed-item">
+                        <div class="feed-left"><i class="fa-solid fa-circle blue-dot"></i> <span>DANA ajak kamu berbagi donasi <i class="fa-solid fa-heart" style="color:#ff4d4f;"></i></span></div>
+                        <div style="color:#aaa; font-size:11px;"><i class="fa-solid fa-bullhorn"></i></div>
+                    </div>
+                </div>
+
+                <div class="large-promo-banner">
+                    <div class="banner-left">
+                        <h2>Skin Bulbasaur</h2>
+                        <p>Siap Diklaim</p>
+                        <button class="btn-koleksi">Koleksi GRATIS Sekarang!</button>
+                    </div>
+                    <div style="font-size: 50px; color: rgba(255,255,255,0.25); font-style: italic;"><i class="fa-solid fa-leaf"></i></div>
+                </div>
+            </div>
+
+            <div class="alert-bar">
+                <div><i class="fa-solid fa-circle-exclamation"></i> Ada 3 aktivitas memerlukan tindakan</div>
+                <div><i class="fa-solid fa-angle-right"></i></div>
+            </div>
+
+            <div class="bottom-nav">
+                <div class="nav-item active">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Beranda</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fa-regular fa-clipboard"></i>
+                    <span>Aktivitas</span>
+                </div>
+                <div class="nav-item pay-btn-container">
+                    <div class="pay-circle">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>PAY</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Dompet</span>
+                </div>
+                <div class="nav-item">
+                    <div class="profile-avatar"><i class="fa-solid fa-user" style="color:#999; font-size:12px;"></i></div>
+                    <span>Saya</span>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ================= SCREEN 2: KIRIM UANG ================= -->
+        <div id="screen-kirim" class="screen">
+            <div class="status-bar">
+                <div>14.31 <i class="fa-solid fa-angle-down" style="font-size: 10px;"></i></div>
+                <div class="status-right" style="color: white;">
+                    <i class="fa-solid fa-signal"></i> 4G
+                    <i class="fa-solid fa-battery-three-quarters"></i>
+                </div>
+            </div>
+            
+            <div class="app-header">
+                <i class="fa-solid fa-angle-left back-btn" onclick="navigateTo('screen-beranda')"></i>
+                <div class="header-title">Kirim Uang</div>
+                <i class="fa-regular fa-circle-question right-icon"></i>
+            </div>
+
+            <div class="kirim-container">
+                <div class="section-card">
+                    <div class="section-title">Kirim Cepat</div>
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="number" id="search-phone-input" placeholder="Masukkan nomor kontak" oninput="handleSearchInput(this)">
+                        <span id="btn-batal-search" class="btn-batal-search" onclick="clearSearch()">BATAL</span>
+                    </div>
+
+                    <!-- Live Bar Kirim ke DANA saat mengetik nomor -->
+                    <div id="live-search-dana" class="live-search-row" onclick="triggerConfirmationModal()">
+                        <div class="live-search-left">
+                            <div class="live-icon-box"><i class="fa-solid fa-wallet"></i></div>
+                            <div>
+                                <div id="live-phone-display" class="live-phone-num">08235246875</div>
+                                <div style="font-size: 12px; color: #888; margin-top: 2px;">Kirim ke DANA</div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="badge-baru">BARU</span>
+                            <i class="fa-solid fa-angle-right" style="color:#ccc; margin-left:8px;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Grid Kontak Cepat Bawaan -->
+                    <div id="default-contact-grid" class="contact-grid">
+                        <div class="contact-item" onclick="selectQuickContact('Junilawati')">
+                            <div class="contact-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="contact-name">Junilawati</div>
+                        </div>
+                        <div class="contact-item" onclick="selectQuickContact('Bang Koperasi')">
+                            <div class="contact-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="contact-name">Bang Koperasi</div>
+                        </div>
+                        <div class="contact-item" onclick="selectQuickContact('HAMDANI')">
+                            <div class="contact-avatar" style="background-color:#fff2e6; color:#ff7a00; font-weight:bold; font-size:11px;">SeaBank</div>
+                            <div class="contact-name">HAMDANI</div>
+                        </div>
+                        <div class="contact-item" onclick="selectQuickContact('Dedi A••••i')">
+                            <div class="contact-avatar" style="background-color:#443344;"><i class="fa-solid fa-user" style="color:#aaa;"></i></div>
+                            <div class="contact-name">Dedi A••••i</div>
+                        </div>
+                        <div class="contact-item" onclick="selectQuickContact('Vikri Alf••••ah')">
+                            <div class="contact-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="contact-name">Vikri Alf••••ah ...</div>
+                        </div>
+                        <div class="contact-item" onclick="selectQuickContact('Dedi R••••n')">
+                            <div class="contact-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="contact-name">Dedi R••••n</div>
+                        </div>
+                        <div class="contact-item" onclick="selectQuickContact('ADE HERMA...')">
+                            <div class="contact-avatar" style="background-color:#e6f2ff; color:#0056b3; font-weight:bold; font-size:11px;">BRI</div>
+                            <div class="contact-name">ADE HERMA...</div>
+                        </div>
+                        <div class="contact-item" onclick="selectQuickContact('ZAHRA A GUSTINA')">
+                            <div class="contact-avatar" style="background-color:#e6fff2; color:#00b356; font-weight:bold; font-size:11px;">amar</div>
+                            <div class="contact-name">ZAHRA A GUSTINA</div>
+                        </div>
+                    </div>
+
+                    <div class="lihat-semua-row">
+                        <span>LIHAT SEMUA</span> <i class="fa-solid fa-angle-down"></i>
+                    </div>
+                </div>
+
+                <div class="menu-kirim-opsi">
+                    <div class="opsi-box">
+                        <i class="fa-solid fa-users" style="color:#108ee9;"></i>
+                        <span>Kirim ke Teman</span>
+                    </div>
+                    <div class="opsi-box">
+                        <i class="fa-solid fa-building-columns" style="color:#ff7a00;"></i>
+                        <span class="opsi-badge">Gratis Transfer 10X</span>
+                        <span>Kirim ke Bank</span>
+                    </div>
+                    <div class="opsi-box">
+                        <i class="fa-solid fa-wallet" style="color:#00b356;"></i>
+                        <span>Kirim ke e-Wallet</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ================= SCREEN 3: KIRIM KE TEMAN (INPUT NOMINAL) ================= -->
+        <div id="screen-nominal" class="screen">
+            <div class="status-bar" style="color: #333;">
+                <div>14.38 <i class="fa-solid fa-angle-down" style="font-size: 10px;"></i></div>
+                <div class="status-right">
+                    <i class="fa-solid fa-signal" style="color:#333;"></i> 4G
+                    <i class="fa-solid fa-battery-three-quarters" style="color:#333;"></i>
+                </div>
+            </div>
+
+            <div class="app-header">
+                <i class="fa-solid fa-angle-left back-btn" onclick="navigateTo('screen-kirim')"></i>
+                <div class="header-title">Kirim ke Teman</div>
+            </div>
+
+            <div class="recipient-bar">
+                <div class="target-avatar-mini"><i class="fa-solid fa-user"></i></div>
+                <div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span id="nominal-target-phone" style="font-weight:700; font-size:15px; color:#333;">08235246875</span>
+                        <span class="badge-baru" style="font-size:8px; padding:1px 4px;">BARU</span>
+                    </div>
+                    <div id="nominal-target-name" style="font-size:13px; color:#666; margin-top:2px;">Nomor Baru</div>
+                </div>
+            </div>
+
+            <div class="nominal-input-container">
+                <div class="nominal-label">Jumlah Kirim</div>
+                <div class="nominal-row">
+                    <span class="rp-symbol">Rp</span>
+                    <span id="nominal-value-display" class="nominal-display-val"></span>
+                </div>
+                <div class="pending-guarantee-badge">
+                    <span>JAMINAN</span>
+                    <span style="font-size:8px;">ANTI PENDING</span>
+                    <span style="color:#ff7a00;">100%</span>
+                    <span>UANG KEMBALI</span>
+                </div>
+            </div>
+
+            <div class="note-input-wrapper">
+                <div class="note-left">
+                    <i class="fa-regular fa-comment-dots"></i>
+                    <span>Kasih catatan disini</span>
+                </div>
+                <span class="badge-baru-red">BARU</span>
+            </div>
+
+            <div class="hide-name-row">
+                <span>Sembunyikan Nama Saya <span class="badge-baru-red" style="font-size:7px; padding:1px 3px;">BARU</span></span>
+                <div class="checkbox-mock"></div>
+            </div>
+
+            <!-- Custom Keyboard Numerik -->
+            <div class="custom-keyboard">
+                <div class="key-btn" onclick="pressKey('1')">1</div>
+                <div class="key-btn" onclick="pressKey('2')">2</div>
+                <div class="key-btn" onclick="pressKey('3')">3</div>
+                <div class="key-btn" onclick="pressKey('4')">4</div>
+                <div class="key-btn" onclick="pressKey('5')">5</div>
+                <div class="key-btn" onclick="pressKey('6')">6</div>
+                <div class="key-btn" onclick="pressKey('7')">7</div>
+                <div class="key-btn" onclick="pressKey('8')">8</div>
+                <div class="key-btn" onclick="pressKey('9')">9</div>
+                <div class="key-btn gray-bg" onclick="pressKey('0')">0</div>
+                <div class="key-btn gray-bg" onclick="pressKey('000')">000</div>
+                <div class="key-btn gray-bg" onclick="pressDelete()"><i class="fa-solid fa-delete-left" style="color:#666;"></i></div>
+            </div>
+
+            <div class="bottom-action-container">
+                <button id="btn-lanjut-nominal" class="btn-submit-nominal" onclick="executeTransfer()">Masukkan Nominal</button>
+            </div>
+        </div>
+
+
+        <!-- ================= SCREEN 4: SUKSES TRANSAKSI ================= -->
+        <div id="screen-sukses" class="screen">
+            <div class="status-bar" style="position:absolute; top:0; left:0; width:100%;">
+                <div>14.40 <i class="fa-solid fa-angle-down" style="font-size: 10px;"></i> <i class="fa-solid fa-triangle-exclamation" style="color:#ff4d4f;"></i></div>
+                <div class="status-right">
+                    <i class="fa-solid fa-signal"></i> 4G
+                    <i class="fa-solid fa-battery-three-quarters"></i>
+                </div>
+            </div>
+
+            <div class="success-circle">
+                <i class="fa-solid fa-check"></i>
+            </div>
+
+            <div class="sukses-title">Kirim ke Saldo DANA</div>
+            <div id="sukses-display-name" class="sukses-target-name">-</div>
+            <div id="sukses-display-phone" class="sukses-target-phone">-</div>
+
+            <div id="sukses-display-amount" class="sukses-amount-display">Rp0</div>
+
+            <button class="btn-bagikan"><i class="fa-solid fa-share-nodes"></i> BAGIKAN</button>
+
+            <div class="sukses-footer-buttons">
+                <button class="btn-footer-sukses btn-white" onclick="alert('Detail Transaksi Berhasil Dibuka')">Detail Transaksi</button>
+                <button class="btn-footer-sukses btn-outline-white" onclick="backToBerandaAfterSuccess()">Tutup</button>
+            </div>
+        </div>
+
+
+        <!-- ================= DIALOG KONFIRMASI (GAMBAR 2 & REFERENSI 3) ================= -->
+        <div id="confirmation-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header-graphic">
+                    <i class="fa-solid fa-user user-i"></i>
+                    <div class="question-badge">?</div>
+                </div>
+
+                <div class="modal-title">Cek lagi sebelum kirim uang ya</div>
+
+                <div class="target-user-card">
+                    <div class="target-avatar-mini"><i class="fa-solid fa-user"></i></div>
+                    <div>
+                        <div id="modal-display-name" class="target-info-name">Ardianto</div>
+                        <div id="modal-display-phone" class="target-info-phone">08235246875</div>
+                    </div>
+                </div>
+
+                <div class="warning-notice-box">
+                    Kamu belum pernah transfer ke nomor ini
+                </div>
+
+                <div class="disclaimer-text">
+                    DANA tidak menjamin kerugian saldo akibat aksi penipuan. Pastikan bisa dipercaya ya.
+                </div>
+
+                <div class="modal-actions-buttons">
+                    <button class="btn-modal btn-secondary" onclick="closeModal()">CEK LAGI</button>
+                    <button class="btn-modal btn-primary" onclick="proceedToNominalScreen()">LANJUT</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Logika Aplikasi -->
+    <script>
+        // State Global Aplikasi
+        let currentBalance = 100000;
+        let activePhoneNumber = "";
+        let activeName = "";
+        let inputNominalStr = "";
+
+        // Fungsi Ganti Halaman
+        function navigateTo(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            // Atur status bar warna teks khusus layar nominal input
+            if(screenId === 'screen-nominal') {
+                document.querySelector('.status-bar').classList.add('dark-text');
+            } else {
+                document.querySelector('.status-bar').classList.remove('dark-text');
+            }
+        }
+
+        // Handle Input Kolom Pencarian Nomor HP
+        function handleSearchInput(input) {
+            const val = input.value;
+            const btnBatal = document.getElementById('btn-batal-search');
+            const liveBar = document.getElementById('live-search-dana');
+            const defaultGrid = document.getElementById('default-contact-grid');
+            
+            if(val.length > 0) {
+                btnBatal.style.display = 'block';
+                liveBar.style.display = 'flex';
+                defaultGrid.style.display = 'none';
+                document.getElementById('live-phone-display').innerText = val;
+                activePhoneNumber = val;
+                activeName = "Nomor Baru";
+            } else {
+                clearSearch();
+            }
+        }
+
+        // Bersihkan Pencarian
+        function clearSearch() {
+            const input = document.getElementById('search-phone-input');
+            input.value = "";
+            document.getElementById('btn-batal-search').style.display = 'none';
+            document.getElementById('live-search-dana').style.display = 'none';
+            document.getElementById('default-contact-grid').style.display = 'grid';
+            activePhoneNumber = "";
+            activeName = "";
+        }
+
+        // Pilih Kontak Cepat Bawaan
+        function selectQuickContact(name) {
+            activeName = name;
+            // Generate nomor acak tiruan jika memilih dari grid bawaan
+            activePhoneNumber = "08" + Math.floor(100000000 + Math.random() * 900000000);
+            triggerConfirmationModal();
+        }
+
+        // Buka Pop-up Dialog Konfirmasi Keamanan
+        function triggerConfirmationModal() {
+            document.getElementById('modal-display-name').innerText = activeName;
+            document.getElementById('modal-display-phone').innerText = activePhoneNumber;
+            document.getElementById('confirmation-modal').classList.add('active');
+        }
+
+        // Tutup Pop-up Dialog
+        function closeModal() {
+            document.getElementById('confirmation-modal').classList.remove('active');
+        }
+
+        // Lanjut ke Layar Input Nominal
+        function proceedToNominalScreen() {
+            closeModal();
+            inputNominalStr = "";
+            updateNominalDisplay();
+            document.getElementById('nominal-target-name').innerText = activeName;
+            document.getElementById('nominal-target-phone').innerText = activePhoneNumber;
+            navigateTo('screen-nominal');
+        }
+
+        // Logika Custom Keyboard Numerik
+        function pressKey(num) {
+            if (inputNominalStr === "" && (num === "0" || num === "000")) return;
+            // Batasi panjang agar tidak overflow layout
+            if (inputNominalStr.length >= 9) return;
+            
+            inputNominalStr += num;
+            updateNominalDisplay();
+        }
+
+        function pressDelete() {
+            inputNominalStr = inputNominalStr.slice(0, -1);
+            updateNominalDisplay();
+        }
+
+        function updateNominalDisplay() {
+            const display = document.getElementById('nominal-value-display');
+            const btn = document.getElementById('btn-lanjut-nominal');
+            
+            if(inputNominalStr === "") {
+                display.innerText = "";
+                btn.innerText = "Masukkan Nominal";
+                btn.classList.remove('ready');
+            } else {
+                // Format ribuan
+                const formatted = parseInt(inputNominalStr).toLocaleString('id-ID');
+                display.innerText = formatted;
+                btn.innerText = "Lanjut";
+                btn.classList.add('ready');
+            }
+        }
+
+        // Eksekusi Transfer & Kurangi Saldo Utama
+        function executeTransfer() {
+            if(inputNominalStr === "") return;
+            
+            const transferAmount = parseInt(inputNominalStr);
+            
+            if(transferAmount > currentBalance) {
+                alert("Saldo Anda tidak mencukupi untuk melakukan transaksi ini!");
+                return;
+            }
+            
+            // Kurangi Saldo
+            currentBalance -= transferAmount;
+            
+            // Update Tampilan Saldo Utama di Beranda
+            document.getElementById('main-balance-text').innerText = "Rp " + currentBalance.toLocaleString('id-ID');
+            
+            // Siapkan Data di Halaman Sukses Transaksi
+            document.getElementById('sukses-display-name').innerText = activeName;
+            document.getElementById('sukses-display-phone').innerText = activePhoneNumber;
+            document.getElementById('sukses-display-amount').innerText = "Rp" + transferAmount.toLocaleString('id-ID');
+            
+            // Pindah Halaman Sukses
+            navigateTo('screen-sukses');
+        }
+
+        // Fungsi Tombol Tutup Halaman Sukses Kembali ke Beranda
+        function backToBerandaAfterSuccess() {
+            clearSearch();
+            navigateTo('screen-beranda');
+        }
+    </script>
+</body>
+</html>
