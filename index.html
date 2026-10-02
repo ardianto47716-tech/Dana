@@ -1597,14 +1597,17 @@
             // Update Tampilan Saldo Utama di Beranda
             document.getElementById('main-balance-text').innerText = "Rp " + currentBalance.toLocaleString('id-ID');
             
-            // Siapkan Data di Halaman Sukses Transaksi
-            document.getElementById('sukses-display-name').innerText = activeName;
-            document.getElementById('sukses-display-phone').innerText = activePhoneNumber;
-            document.getElementById('sukses-display-amount').innerText = "Rp" + transferAmount.toLocaleString('id-ID');
-            
-            // Pindah Halaman Sukses
-            navigateTo('screen-sukses');
-        }
+                // // Siapkan Data di Halaman Sukses Transaksi
+    document.getElementById('sukses-display-name').innerText = activeName;
+    document.getElementById('sukses-display-phone').innerText = activePhoneNumber;
+    document.getElementById('sukses-display-amount').innerText = "Rp " + transferAmount.toLocaleString('id-ID');
+
+    // Putar Suara Notifikasi Sukses
+    const audioNotif = new Audio('notif.mp3');
+    audioNotif.play().catch(e => console.log("Gagal memutar audio:", e));
+
+    // // Pindah Halaman Sukses
+    navigateTo('screen-sukses');
 
         // Fungsi Tombol Tutup Halaman Sukses Kembali ke Beranda
         function backToBerandaAfterSuccess() {
